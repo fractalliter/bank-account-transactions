@@ -10,6 +10,8 @@ public class Transaction implements Serializable {
     private Direction direction;
     private String description;
 
+    private Balance balance;
+
     public Transaction() {
         super();
     }
@@ -28,6 +30,14 @@ public class Transaction implements Serializable {
 
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
+    }
+
+    public Balance getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Balance balance) {
+        this.balance = balance;
     }
 
     public Long getId() {
