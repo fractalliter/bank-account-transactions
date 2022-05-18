@@ -2,10 +2,10 @@ package com.tuum.bankassignment.mapper;
 
 import com.tuum.bankassignment.entity.Balance;
 import com.tuum.bankassignment.entity.Currency;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.mapping.FetchType;
+
+import java.util.List;
 
 @Mapper
 public interface BalanceMapper {
@@ -14,18 +14,26 @@ public interface BalanceMapper {
     void createBalance(Balance balance);
 
     @Update("UPDATE balances SET amount= amount+#{amount} " +
-            "WHERE account_id=#{accountId} AND currency=#{currency}")
+            "WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies")
     void increaseBalance(
-            @Param("account_id") Long accountId,
+            @Param("accountId") Long accountId,
             @Param("currency")Currency currency,
             @Param("amount") Long amount
     );
 
     @Update("UPDATE balances SET amount= amount-#{amount} " +
-            "WHERE account_id=#{accountId} AND currency=#{currency} AND amount > 0")
+            "WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies AND amount > 0")
     void decreaseBalance(
-            @Param("account_id") Long accountId,
+            @Param("accountId") Long accountId,
             @Param("currency")Currency currency,
             @Param("amount") Long amount
     );
+
+    @Select("SELECT * FROM balances WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies")
+    @Results(value = {
+            @Result(property = "accountId", column = "account_id"),
+            @Result(property = "amount", column = "amount"),
+            @Result(property = "currency", column = "currency"),
+    })
+    Balance getBalance(Long accountId, Currency currency);
 }
