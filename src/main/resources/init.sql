@@ -5,18 +5,20 @@ CREATE TABLE IF NOT EXISTS accounts(
     PRIMARY KEY (id)
 );
 
+CREATE TYPE valid_currencies AS ENUM ('EUR','SEK','GBP','USD');
+CREATE TYPE valid_directions AS ENUM ('IN','OUT');
+
 CREATE TABLE IF NOT EXISTS transactions(
     id SERIAL NOT NULL ,
     account_id INT NOT NULL ,
     amount NUMERIC NOT NULL DEFAULT 0,
-    currency VARCHAR(12) NOT NULL ,
-    direction VARCHAR(4) NOT NULL ,
-    description TEXT,
+    currency valid_currencies NOT NULL ,
+    direction valid_directions NOT NULL ,
+    description TEXT NOT NULL ,
     PRIMARY KEY (id),
     FOREIGN KEY (account_id) REFERENCES accounts (id)
 );
 
-CREATE TYPE valid_currencies AS ENUM ('EUR','SEK','GBP','USD');
 CREATE TABLE IF NOT EXISTS balances(
     id SERIAL NOT NULL ,
     currency valid_currencies NOT NULL,
