@@ -1,25 +1,16 @@
 package com.tuum.bankassignment.service;
 
 import com.tuum.bankassignment.dto.CreateTransactionDTO;
-import com.tuum.bankassignment.entity.Currency;
 import com.tuum.bankassignment.entity.Direction;
 import com.tuum.bankassignment.entity.Transaction;
 import com.tuum.bankassignment.exception.AccountNotFoundException;
 import com.tuum.bankassignment.exception.InsufficientFundException;
 import com.tuum.bankassignment.exception.InvalidAmountException;
-import com.tuum.bankassignment.exception.InvalidCurrencyException;
 import com.tuum.bankassignment.mapper.BalanceMapper;
 import com.tuum.bankassignment.mapper.TransactionMapper;
-import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{
@@ -45,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService{
         if (Direction.OUT.equals(transaction.getDirection()) &&  balanceMapper.getBalance(
                 transaction.getAccountId(),
                 transaction.getCurrency()
-        ).getAmount() - transaction.getAmount() < 0){
+        ).getAmount().doubleValue() - transaction.getAmount() < 0){
             throw new InsufficientFundException();
         }
         if(transaction.getDirection().equals(Direction.IN))

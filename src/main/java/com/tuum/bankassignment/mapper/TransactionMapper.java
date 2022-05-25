@@ -1,6 +1,5 @@
 package com.tuum.bankassignment.mapper;
 
-import com.tuum.bankassignment.dto.CreateTransactionDTO;
 import com.tuum.bankassignment.entity.Transaction;
 import org.apache.ibatis.annotations.*;
 

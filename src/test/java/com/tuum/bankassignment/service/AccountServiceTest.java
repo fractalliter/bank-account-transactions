@@ -49,7 +49,7 @@ class AccountServiceTest {
         assertEquals(account.getCountry(), "Iran");
         assertEquals(account.getCustomerId(),"1234");
         assertEquals(account.getBalances().size(), 2);
-        assertEquals(account.getBalances().stream().mapToLong(Balance::getAmount).sum(), 0);
+        assertEquals(account.getBalances().stream().mapToDouble(i -> i.getAmount().doubleValue()).sum(), 0d);
     }
 
     @Test

@@ -3,9 +3,6 @@ package com.tuum.bankassignment.mapper;
 import com.tuum.bankassignment.entity.Balance;
 import com.tuum.bankassignment.entity.Currency;
 import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.mapping.FetchType;
-
-import java.util.List;
 
 @Mapper
 public interface BalanceMapper {

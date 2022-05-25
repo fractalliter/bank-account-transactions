@@ -1,7 +1,5 @@
-package com.tuum.bankassignment.loging;
+package com.tuum.bankassignment.logging;
 
-import com.tuum.bankassignment.dto.CreateAccountDTO;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.JoinPoint;

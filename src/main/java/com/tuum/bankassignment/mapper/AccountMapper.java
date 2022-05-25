@@ -1,6 +1,5 @@
 package com.tuum.bankassignment.mapper;
 
-import com.tuum.bankassignment.dto.CreateAccountDTO;
 import com.tuum.bankassignment.entity.Account;
 import com.tuum.bankassignment.entity.Balance;
 import com.tuum.bankassignment.entity.Transaction;

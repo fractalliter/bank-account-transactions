@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
         var newAccount = new Account(account.getCustomerId(), account.getCountry());
         accountMapper.createAccount(newAccount);
         account.getCurrency().forEach(currency -> {
-            var balance = new Balance(newAccount.getAccountId(), 0L, currency);
+            var balance = new Balance(newAccount.getAccountId(), new BigDecimal(0), currency);
             balanceMapper.createBalance(balance);
         });
         return getAccount(newAccount.getAccountId());

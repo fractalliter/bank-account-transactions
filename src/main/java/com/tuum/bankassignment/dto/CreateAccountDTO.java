@@ -2,7 +2,6 @@ package com.tuum.bankassignment.dto;
 
 import com.tuum.bankassignment.entity.Currency;
 
-import java.util.List;
 import java.util.Set;
 
 public class CreateAccountDTO {

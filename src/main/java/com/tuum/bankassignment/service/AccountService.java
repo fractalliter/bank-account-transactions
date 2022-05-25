@@ -1,14 +1,10 @@
 package com.tuum.bankassignment.service;
 
 import com.tuum.bankassignment.dto.CreateAccountDTO;
-import com.tuum.bankassignment.dto.CreateTransactionDTO;
 import com.tuum.bankassignment.entity.Account;
-import com.tuum.bankassignment.entity.Balance;
 import com.tuum.bankassignment.entity.Transaction;
 import com.tuum.bankassignment.exception.AccountNotFoundException;
 import com.tuum.bankassignment.exception.InvalidCurrencyException;
-import org.apache.ibatis.javassist.NotFoundException;
-import org.apache.ibatis.javassist.tools.web.BadHttpRequest;
 
 import java.util.List;
 
