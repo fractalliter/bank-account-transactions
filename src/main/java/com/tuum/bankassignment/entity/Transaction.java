@@ -1,11 +1,12 @@
 package com.tuum.bankassignment.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class Transaction implements Serializable {
     private Long id;
     private Long accountId;
-    private Long amount;
+    private BigDecimal amount;
     private Currency currency;
     private Direction direction;
     private String description;
@@ -16,7 +17,7 @@ public class Transaction implements Serializable {
         super();
     }
 
-    public Transaction(Long accountId, Long amount, Currency currency, Direction direction, String description) {
+    public Transaction(Long accountId, BigDecimal amount, Currency currency, Direction direction, String description) {
         this.accountId = accountId;
         this.amount = amount;
         this.currency = currency;
@@ -48,11 +49,11 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
-    public Long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

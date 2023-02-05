@@ -3,9 +3,11 @@ package com.tuum.bankassignment.dto;
 import com.tuum.bankassignment.entity.Currency;
 import com.tuum.bankassignment.entity.Direction;
 
+import java.math.BigDecimal;
+
 public class CreateTransactionDTO {
     Long accountId;
-    Long amount;
+    BigDecimal amount;
     Currency currency;
     Direction direction;
     String Description;
@@ -18,11 +20,11 @@ public class CreateTransactionDTO {
         this.accountId = accountId;
     }
 
-    public Long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

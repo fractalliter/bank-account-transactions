@@ -24,11 +24,11 @@ public interface AccountMapper {
     })
     Account getAccount(@Param("id") Long id);
 
-    @Select("SELECT * FROM balances WHERE account_id = #{accountID}")
+    @Select("SELECT account_id, amount, currency FROM balances WHERE account_id = #{accountID}")
     @Results(value = {
-            @Result(property = "currency", column = "currency"),
+            @Result(property = "accountId", column = "account_id"),
             @Result(property = "amount", column = "amount"),
-            @Result(property = "accountId", column = "account_id")
+            @Result(property = "currency", column = "currency")
     })
     List<Balance> getBalances(Long accountId);
     @Select("SELECT t.id, t.account_id, t.amount, t.currency, t.direction, t.description " +

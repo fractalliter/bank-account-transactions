@@ -4,6 +4,8 @@ import com.tuum.bankassignment.entity.Balance;
 import com.tuum.bankassignment.entity.Currency;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
+
 @Mapper
 public interface BalanceMapper {
     @Insert("INSERT INTO balances(currency, amount, account_id)" +
@@ -15,18 +17,18 @@ public interface BalanceMapper {
     void increaseBalance(
             @Param("accountId") Long accountId,
             @Param("currency")Currency currency,
-            @Param("amount") Long amount
+            @Param("amount") BigDecimal amount
     );
 
     @Update("UPDATE balances SET amount= amount-#{amount} " +
             "WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies AND amount > 0")
     void decreaseBalance(
             @Param("accountId") Long accountId,
-            @Param("currency")Currency currency,
-            @Param("amount") Long amount
+            @Param("currency") Currency currency,
+            @Param("amount") BigDecimal amount
     );
 
-    @Select("SELECT * FROM balances WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies")
+    @Select("SELECT account_id, amount, currency FROM balances WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies")
     @Results(value = {
             @Result(property = "accountId", column = "account_id"),
             @Result(property = "amount", column = "amount"),

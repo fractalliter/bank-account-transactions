@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+
 @Service
 public class TransactionServiceImpl implements TransactionService{
     private final TransactionMapper transactionMapper;
@@ -30,13 +32,14 @@ public class TransactionServiceImpl implements TransactionService{
     public Transaction createTransaction(CreateTransactionDTO transaction)
             throws AccountNotFoundException, InvalidAmountException, InsufficientFundException {
         var account = accountService.getAccount(transaction.getAccountId());
-        if (transaction.getAmount() < 0){
+        if (transaction.getAmount().compareTo(new BigDecimal(0)) < 0){
             throw new InvalidAmountException();
         }
-        if (Direction.OUT.equals(transaction.getDirection()) &&  balanceMapper.getBalance(
+        var balanceComparison = balanceMapper.getBalance(
                 transaction.getAccountId(),
                 transaction.getCurrency()
-        ).getAmount().doubleValue() - transaction.getAmount() < 0){
+        ).getAmount().subtract(transaction.getAmount()).compareTo(new BigDecimal(0));
+        if (Direction.OUT.equals(transaction.getDirection()) && balanceComparison < 0){
             throw new InsufficientFundException();
         }
         if(transaction.getDirection().equals(Direction.IN))

@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,7 +75,7 @@ class AccountServiceTest {
         var account = accountService.createAccount(accountDTO);
         var transaction = new Transaction(
                 account.getAccountId(),
-                1234L,
+                new BigDecimal("1234.34"),
                 Currency.EUR,
                 Direction.IN,
                 "test"
@@ -81,12 +83,12 @@ class AccountServiceTest {
         transactionMapper.createTransaction(transaction);
         assertNotNull(transaction);
         assertNotEquals(transaction.getId(), 0L);
-        assertEquals(transaction.getAmount(), 1234L);
+        assertEquals(transaction.getAmount().compareTo(new BigDecimal("1234.34")), 0);
         var transactions = accountService.getTransactions(account.getAccountId(), (short) 0, (short) 2);
         assertNotEquals(transactions.size(), 0);
         assertEquals(transactions.size(), 1);
         assertEquals(transactions.get(0).getAccountId(), account.getAccountId());
-        assertEquals(transactions.get(0).getAmount(),1234L);
+        assertEquals(transactions.get(0).getAmount().compareTo(new BigDecimal("1234.34")),0);
         assertEquals(transactions.get(0).getDescription(),"test");
         assertEquals(transactions.get(0).getCurrency(),Currency.EUR);
         assertEquals(transactions.get(0).getDirection(),Direction.IN);
