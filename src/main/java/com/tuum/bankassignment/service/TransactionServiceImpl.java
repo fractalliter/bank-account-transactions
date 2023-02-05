@@ -10,12 +10,13 @@ import com.tuum.bankassignment.mapper.BalanceMapper;
 import com.tuum.bankassignment.mapper.TransactionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 @Service
-public class TransactionServiceImpl implements TransactionService{
+public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
     private final BalanceMapper balanceMapper;
     private final AccountService accountService;
@@ -28,27 +29,28 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Transaction createTransaction(CreateTransactionDTO transaction)
             throws AccountNotFoundException, InvalidAmountException, InsufficientFundException {
         var account = accountService.getAccount(transaction.getAccountId());
-        if (transaction.getAmount().compareTo(new BigDecimal(0)) < 0){
+        if (transaction.getAmount().compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidAmountException();
         }
         var balanceComparison = balanceMapper.getBalance(
                 transaction.getAccountId(),
                 transaction.getCurrency()
-        ).getAmount().subtract(transaction.getAmount()).compareTo(new BigDecimal(0));
-        if (Direction.OUT.equals(transaction.getDirection()) && balanceComparison < 0){
-            throw new InsufficientFundException();
-        }
-        if(transaction.getDirection().equals(Direction.IN))
-            balanceMapper.increaseBalance(
+        ).getAmount().subtract(transaction.getAmount()).compareTo(BigDecimal.ZERO);
+        if (Direction.OUT.equals(transaction.getDirection())) {
+            if (balanceComparison < 0)
+                throw new InsufficientFundException();
+            else balanceMapper.decreaseBalance(
                     account.getAccountId(),
                     transaction.getCurrency(),
                     transaction.getAmount()
             );
-        else balanceMapper.decreaseBalance(
+        }
+        else if(Direction.IN.equals(transaction.getDirection()))
+            balanceMapper.increaseBalance(
                 account.getAccountId(),
                 transaction.getCurrency(),
                 transaction.getAmount()

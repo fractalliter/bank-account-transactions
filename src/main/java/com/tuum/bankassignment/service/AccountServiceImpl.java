@@ -11,6 +11,7 @@ import com.tuum.bankassignment.mapper.AccountMapper;
 import com.tuum.bankassignment.mapper.BalanceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -33,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Account createAccount(CreateAccountDTO account) throws InvalidCurrencyException {
         var tempCurrency = new HashSet<>(Set.copyOf(account.getCurrency()));
         tempCurrency.removeAll(Arrays.stream(Currency.values()).collect(Collectors.toSet()));
@@ -43,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
         var newAccount = new Account(account.getCustomerId(), account.getCountry());
         accountMapper.createAccount(newAccount);
         account.getCurrency().forEach(currency -> {
-            var balance = new Balance(newAccount.getAccountId(), new BigDecimal(0), currency);
+            var balance = new Balance(newAccount.getAccountId(), BigDecimal.ZERO, currency);
             balanceMapper.createBalance(balance);
         });
         return getAccount(newAccount.getAccountId());
@@ -56,8 +57,8 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
-    @Transactional
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<Transaction> getTransactions(Long accountId, Short page, Short size) throws AccountNotFoundException {
         getAccount(accountId);
         return accountMapper.getTransactions(accountId, page * size, size);
