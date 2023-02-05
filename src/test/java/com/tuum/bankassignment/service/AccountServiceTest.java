@@ -1,7 +1,10 @@
 package com.tuum.bankassignment.service;
 
 import com.tuum.bankassignment.dto.CreateAccountDTO;
-import com.tuum.bankassignment.entity.*;
+import com.tuum.bankassignment.entity.Account;
+import com.tuum.bankassignment.entity.Currency;
+import com.tuum.bankassignment.entity.Direction;
+import com.tuum.bankassignment.entity.Transaction;
 import com.tuum.bankassignment.exception.AccountNotFoundException;
 import com.tuum.bankassignment.exception.InvalidCurrencyException;
 import com.tuum.bankassignment.mapper.AccountMapper;
@@ -15,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
