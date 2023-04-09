@@ -6,6 +6,7 @@ import com.tuum.bankassignment.exception.AccountNotFoundException;
 import com.tuum.bankassignment.service.AccountService;
 import com.tuum.bankassignment.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class TransactionController {
     AccountService accountService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     Transaction createTransaction(@RequestBody CreateTransactionDTO transaction) throws AccountNotFoundException {
         return transactionService.createTransaction(transaction);
     }
