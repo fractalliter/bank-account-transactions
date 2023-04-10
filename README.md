@@ -43,7 +43,12 @@ a container form the bank account microservice docker image and will bind port 8
 ## How to use
 Hit the port 8080 for the good reasons.
 
+### API page
+Go to [OpenAPI](http://localhost:8080/swagger-ui/index.html) documents page and hit the endpoints.
+
 ## Todo
-- [ ] add documentation
 - [ ] add benchmark
 - [ ] add integration test for transactions
+- [ ] add java docs
+- [ ] add build status and test coverage to pull requests
+- [ ] add project status to readme
