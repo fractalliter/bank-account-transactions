@@ -1,4 +1,5 @@
 # Bank Account Transactions Microservice
+
 A Bank account transactions microservice with Spring Boot, Postgres, and RabbitMQ.
 This microservice is responsible for creating user account and balances for provided currencies that are defined
 as an `enum`:
@@ -31,22 +32,27 @@ All transactions will be executed with proper isolation level.
 - [Docker](https://www.docker.com/)
 
 ## How to deploy
+
 You need to have docker installed on your machine. you can easily deploy the service with executing
 following command in your bash terminal:
 
 ```bash
 docker compose up
 ```
+
 It will create and start **database** and **message broker** services first and then it will create
 a container form the bank account microservice docker image and will bind port 8080 of the container for public use.
 
 ## How to use
+
 Hit the port 8080 for the good reasons.
 
 ### API page
+
 Go to [OpenAPI](http://localhost:8080/swagger-ui/index.html) documents page and hit the endpoints.
 
 ## Todo
+
 - [ ] add benchmark
 - [ ] add integration test for transactions
 - [ ] add java docs

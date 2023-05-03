@@ -8,9 +8,13 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       MESSAGE_BROKER_HOST: message_broker
+      MESSAGE_BROKER_PORT: 5672
+      MESSAGE_BROKER_USER: guest
+      MESSAGE_BROKER_PASS: guest
       DATABASE: bank
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
+      PROFILE: prod
     ports:
       - "8080:8080"
     depends_on:
@@ -31,5 +35,9 @@ services:
       interval: 1s
   message_broker:
     image: rabbitmq:3
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672"
+      - "15692:15692"

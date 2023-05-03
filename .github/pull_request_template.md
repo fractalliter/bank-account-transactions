@@ -1,4 +1,4 @@
- ### All Submissions:
+### All Submissions:
 
 - [ ] The commit message follows our guidelines
 - [ ] Tests for the changes have been added (for bug fixes/features)
@@ -7,6 +7,7 @@
 <!-- You can erase any parts of this template not applicable to your Pull Request. -->
 
 ### How to test
+
 <!-- Add description about the tests -->
 
 ### New Feature Submissions:
