@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,11 +75,14 @@ class AccountServiceTest {
 
     @Test
     void getAccount() throws AccountNotFoundException {
+        // Given
         var account = new Account("1234", "Iran");
         account.setAccountId(1L);
 
+        // When
         when(accountMapper.getAccount(account.getAccountId())).thenReturn(account);
 
+        // Then
         account = accountService.getAccount(account.getAccountId());
         assertNotNull(account);
         assertEquals("1234", account.getCustomerId());
@@ -93,32 +97,38 @@ class AccountServiceTest {
 
     @Test
     void getTransactions() throws AccountNotFoundException {
-        var accountDTO = new CreateAccountDTO();
-        accountDTO.setCountry("Iran");
-        accountDTO.setCurrency(Set.of(Currency.EUR, Currency.GBP));
-        accountDTO.setCustomerId("1234");
-        var account = accountService.createAccount(accountDTO);
+        // Given
         var transaction = new Transaction(
-                account.getAccountId(),
+                1L,
                 new BigDecimal("1234.34"),
                 Currency.EUR,
                 Direction.IN,
                 "test"
         );
-        transactionMapper.createTransaction(transaction);
-        assertNotNull(transaction);
-        assertNotEquals(0L, transaction.getId());
-        assertEquals(0, transaction.getAmount().compareTo(new BigDecimal("1234.34")));
+        var transaction1 = new Transaction(
+                1L,
+                new BigDecimal("123.3"),
+                Currency.GBP,
+                Direction.OUT,
+                "test1"
+        );
 
-        var transactions = accountService.getTransactions(account.getAccountId(), (short) 0, (short) 2);
-        assertNotEquals(0, transactions.size());
-        assertEquals(1, transactions.size());
-        Assertions.assertEquals(transactions.get(0).getAccountId(), account.getAccountId());
+        // When
+        when(accountMapper.getTransactions(1L, 0, (short) 2))
+                .thenReturn(List.of(transaction, transaction1));
+
+        // Then
+        var transactions = accountService.getTransactions(1L, (short) 0, (short) 2);
+        assertEquals(2, transactions.size());
+        Assertions.assertEquals(1L, transactions.get(0).getAccountId());
         Assertions.assertEquals(0, transactions.get(0).getAmount().compareTo(new BigDecimal("1234.34")));
         Assertions.assertEquals("test", transactions.get(0).getDescription());
         Assertions.assertEquals(Currency.EUR, transactions.get(0).getCurrency());
         Assertions.assertEquals(Direction.IN, transactions.get(0).getDirection());
+    }
 
+    @Test
+    void getTransactionThrowsAccountNotFound(){
         assertThrows(
                 AccountNotFoundException.class,
                 () -> accountService.getTransactions(10000L, (short) 0, (short) 2));
