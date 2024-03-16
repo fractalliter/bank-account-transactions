@@ -1,4 +1,4 @@
-package com.earl.bank.logging;
+package com.earl.bank.configurations;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
