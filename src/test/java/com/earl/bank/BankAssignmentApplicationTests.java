@@ -4,7 +4,6 @@ import com.earl.bank.configurations.RabbitMQConfig;
 import com.earl.bank.configurations.RabbitMQSender;
 import com.earl.bank.controller.AccountController;
 import com.earl.bank.controller.TransactionController;
-import com.earl.bank.dto.CreateAccountDTO;
 import com.earl.bank.exception.GlobalExceptionHandler;
 import com.earl.bank.logging.AOPLogging;
 import com.earl.bank.mapper.AccountMapper;

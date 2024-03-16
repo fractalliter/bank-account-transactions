@@ -6,7 +6,6 @@ import com.earl.bank.exception.AccountNotFoundException;
 import com.earl.bank.exception.InvalidCurrencyException;
 import com.earl.bank.mapper.AccountMapper;
 import com.earl.bank.mapper.BalanceMapper;
-import com.earl.bank.mapper.TransactionMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,9 +36,6 @@ class AccountServiceTest {
 
     @Mock
     BalanceMapper balanceMapper;
-
-    @Mock
-    TransactionMapper transactionMapper;
 
     @BeforeEach
     void setUp() {
@@ -128,7 +124,7 @@ class AccountServiceTest {
     }
 
     @Test
-    void getTransactionThrowsAccountNotFound(){
+    void getTransactionThrowsAccountNotFound() {
         assertThrows(
                 AccountNotFoundException.class,
                 () -> accountService.getTransactions(10000L, (short) 0, (short) 2));
