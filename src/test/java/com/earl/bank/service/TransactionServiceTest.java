@@ -1,6 +1,5 @@
 package com.earl.bank.service;
 
-import com.earl.bank.dto.CreateAccountDTO;
 import com.earl.bank.dto.CreateTransactionDTO;
 import com.earl.bank.entity.*;
 import com.earl.bank.exception.AccountNotFoundException;
@@ -26,7 +25,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +35,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 class TransactionServiceTest {
+
     @Autowired
     TransactionService transactionService;
     @Mock
@@ -170,13 +169,19 @@ class TransactionServiceTest {
     @MethodSource("currencyAndDirectionCombinator")
     @DisplayName("creating a transaction for non existence bank account throws AccountNotFoundException")
     void createTransactionThrowsAccountNotFoundException(Currency currency, Direction direction) {
+        // Given
         var transactionDTO = new CreateTransactionDTO();
         transactionDTO.setAmount(new BigDecimal("1000.00"));
         transactionDTO.setCurrency(currency);
         transactionDTO.setDescription("test");
         transactionDTO.setDirection(direction);
         transactionDTO.setAccountId(1000000L);
-        assertNotNull(transactionDTO);
+
+        // WHen
+        when(accountService.getAccount(transactionDTO.getAccountId()))
+                .thenThrow(AccountNotFoundException.class);
+
+        // Then
         assertThrows(
                 AccountNotFoundException.class,
                 () -> transactionService.createTransaction(transactionDTO)
@@ -188,13 +193,9 @@ class TransactionServiceTest {
     @EnumSource(Currency.class)
     @DisplayName("creating a withdraw transaction more than currency balance throws InsufficientFundException")
     void createTransactionThrowsInsufficientFundException(Currency currency) {
-        var accountDTO = new CreateAccountDTO();
-        accountDTO.setCountry("Iran");
-        accountDTO.setCurrency(Set.of(Currency.values()));
-        accountDTO.setCustomerId("1234");
-        var account = accountService.createAccount(accountDTO);
-
-        assertNotNull(account);
+        // Given
+        var account = new Account("1234", "Iran");
+        account.setAccountId(1L);
 
         var transactionDTO = new CreateTransactionDTO();
         transactionDTO.setCurrency(currency);
@@ -203,7 +204,18 @@ class TransactionServiceTest {
         transactionDTO.setDirection(Direction.OUT);
         transactionDTO.setAmount(new BigDecimal("1000.00"));
 
-        assertNotNull(transactionDTO);
+        var currentBalance = new Balance(
+                account.getAccountId(),
+                new BigDecimal("10.00"),
+                currency);
+
+        // When
+        when(accountService.getAccount(account.getAccountId())).thenReturn(account);
+        when(balanceMapper.getBalance(account.getAccountId(), transactionDTO.getCurrency()))
+                .thenReturn(currentBalance);
+
+
+        // Then
         assertThrows(
                 InsufficientFundException.class,
                 () -> transactionService.createTransaction(transactionDTO)
@@ -215,21 +227,12 @@ class TransactionServiceTest {
     @MethodSource("currencyAndDirectionCombinator")
     @DisplayName("creating a transaction with negative amount throws InvalidAmountException")
     void createTransactionThrowsInvalidAmountException(Currency currency, Direction direction) {
-        var accountDTO = new CreateAccountDTO();
-        accountDTO.setCountry("Iran");
-        accountDTO.setCurrency(Set.of(Currency.values()));
-        accountDTO.setCustomerId("1234");
-        var account = accountService.createAccount(accountDTO);
-        assertNotNull(account);
-
         var transactionDTO = new CreateTransactionDTO();
         transactionDTO.setCurrency(currency);
         transactionDTO.setDescription("test");
-        transactionDTO.setAccountId(account.getAccountId());
+        transactionDTO.setAccountId(1L);
         transactionDTO.setDirection(direction);
         transactionDTO.setAmount(new BigDecimal("10000.00").negate());
-
-        assertNotNull(transactionDTO);
         assertThrows(
                 InvalidAmountException.class,
                 () -> transactionService.createTransaction(transactionDTO)
