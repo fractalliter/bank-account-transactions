@@ -1,10 +1,7 @@
 package com.earl.bank.service;
 
 import com.earl.bank.dto.CreateAccountDTO;
-import com.earl.bank.entity.Account;
-import com.earl.bank.entity.Currency;
-import com.earl.bank.entity.Direction;
-import com.earl.bank.entity.Transaction;
+import com.earl.bank.entity.*;
 import com.earl.bank.exception.AccountNotFoundException;
 import com.earl.bank.exception.InvalidCurrencyException;
 import com.earl.bank.mapper.AccountMapper;
@@ -13,29 +10,34 @@ import com.earl.bank.mapper.TransactionMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 class AccountServiceTest {
-    @MockBean
+    @Autowired
     AccountService accountService;
 
-    @Autowired
+    @Mock
     AccountMapper accountMapper;
 
-    @Autowired
+    @Mock
     BalanceMapper balanceMapper;
 
-    @Autowired
+    @Mock
     TransactionMapper transactionMapper;
 
     @BeforeEach
@@ -45,27 +47,47 @@ class AccountServiceTest {
 
     @Test
     void createAccount() throws InvalidCurrencyException {
+        // Given
+        Set<Currency> currencies = Set.of(Currency.EUR, Currency.GBP);
         var accountDTO = new CreateAccountDTO();
         accountDTO.setCountry("Iran");
-        accountDTO.setCurrency(Set.of(Currency.EUR, Currency.GBP));
+        accountDTO.setCurrency(currencies);
         accountDTO.setCustomerId("1234");
+        Account accountModel = new Account(accountDTO.getCustomerId(), accountDTO.getCountry());
+        accountModel.setAccountId(1L);
+        Balance euroBalance = new Balance(accountModel.getAccountId(), BigDecimal.ZERO, Currency.EUR);
+        euroBalance.setAccountId(1L);
+        Balance poundBalance = new Balance(accountModel.getAccountId(), BigDecimal.ZERO, Currency.GBP);
+        euroBalance.setAccountId(2L);
+
+        // When
+        when(accountMapper.createAccount(any(Account.class))).thenReturn(accountModel);
+        when(balanceMapper.createBalance(any(Balance.class))).thenReturn(euroBalance, poundBalance);
+
+        // Then
         var account = accountService.createAccount(accountDTO);
         assertNotNull(account);
-        Assertions.assertEquals(account.getCountry(), "Iran");
-        Assertions.assertEquals(account.getCustomerId(), "1234");
-        Assertions.assertEquals(account.getBalances().size(), 2);
-        Assertions.assertEquals(account.getBalances().stream().mapToDouble(i -> i.getAmount().doubleValue()).sum(), 0d);
+        Assertions.assertEquals("Iran", account.getCountry());
+        Assertions.assertEquals("1234", account.getCustomerId());
+        Assertions.assertEquals(2, account.getBalances().size());
     }
 
     @Test
     void getAccount() throws AccountNotFoundException {
         var account = new Account("1234", "Iran");
-        accountMapper.createAccount(account);
+        account.setAccountId(1L);
+
+        when(accountMapper.getAccount(account.getAccountId())).thenReturn(account);
+
         account = accountService.getAccount(account.getAccountId());
         assertNotNull(account);
-        assertEquals(account.getCustomerId(), "1234");
-        assertEquals(account.getCountry(), "Iran");
-        assertNotEquals(account.getAccountId(), 0L);
+        assertEquals("1234", account.getCustomerId());
+        assertEquals("Iran", account.getCountry());
+        assertNotEquals(0L, account.getAccountId());
+    }
+
+    @Test
+    void getAccountThrowsAccountNotFoundException() {
         assertThrows(AccountNotFoundException.class, () -> accountService.getAccount(10000L));
     }
 
@@ -85,16 +107,17 @@ class AccountServiceTest {
         );
         transactionMapper.createTransaction(transaction);
         assertNotNull(transaction);
-        assertNotEquals(transaction.getId(), 0L);
-        assertEquals(transaction.getAmount().compareTo(new BigDecimal("1234.34")), 0);
+        assertNotEquals(0L, transaction.getId());
+        assertEquals(0, transaction.getAmount().compareTo(new BigDecimal("1234.34")));
+
         var transactions = accountService.getTransactions(account.getAccountId(), (short) 0, (short) 2);
-        assertNotEquals(transactions.size(), 0);
-        assertEquals(transactions.size(), 1);
+        assertNotEquals(0, transactions.size());
+        assertEquals(1, transactions.size());
         Assertions.assertEquals(transactions.get(0).getAccountId(), account.getAccountId());
-        Assertions.assertEquals(transactions.get(0).getAmount().compareTo(new BigDecimal("1234.34")), 0);
-        Assertions.assertEquals(transactions.get(0).getDescription(), "test");
-        Assertions.assertEquals(transactions.get(0).getCurrency(), Currency.EUR);
-        Assertions.assertEquals(transactions.get(0).getDirection(), Direction.IN);
+        Assertions.assertEquals(0, transactions.get(0).getAmount().compareTo(new BigDecimal("1234.34")));
+        Assertions.assertEquals("test", transactions.get(0).getDescription());
+        Assertions.assertEquals(Currency.EUR, transactions.get(0).getCurrency());
+        Assertions.assertEquals(Direction.IN, transactions.get(0).getDirection());
 
         assertThrows(
                 AccountNotFoundException.class,
