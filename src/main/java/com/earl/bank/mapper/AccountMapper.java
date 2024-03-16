@@ -38,9 +38,7 @@ public interface AccountMapper {
     List<Balance> getBalances(Long accountId);
 
     @Select("SELECT t.id, t.account_id, t.amount, t.currency, t.direction, t.description " +
-            "FROM (SELECT * FROM transactions WHERE account_id=#{id}) AS t LEFT JOIN " +
-            "(SELECT * FROM accounts WHERE id= #{id}) AS a " +
-            "ON a.id = t.account_id " +
+            "FROM transactions AS t WHERE account_id=#{id} " +
             "ORDER BY t.id DESC LIMIT #{limit} OFFSET #{offset}")
     @Results(value = {
             @Result(property = "accountId", column = "account_id"),
