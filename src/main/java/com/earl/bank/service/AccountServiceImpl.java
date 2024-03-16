@@ -51,7 +51,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<Transaction> getTransactions(Long accountId, Short page, Short size) throws AccountNotFoundException {
-        getAccount(accountId);
-        return accountMapper.getTransactions(accountId, page * size, size);
+        List<Transaction> transactions = accountMapper.getTransactions(accountId, page * size, size);
+        if (transactions.isEmpty()) throw new AccountNotFoundException();
+        return transactions;
     }
 }
