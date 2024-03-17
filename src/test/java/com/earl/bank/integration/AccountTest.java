@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-public class AccountTest {
+class AccountTest {
     @Autowired
     private MockMvc mvc;
 
@@ -40,7 +40,7 @@ public class AccountTest {
     }
 
     @Test
-    public void createAccount() throws Exception {
+    void createAccount() throws Exception {
         var account = new CreateAccountDTO();
         account.setCustomerId("1234");
         account.setCountry("Iran");
@@ -63,7 +63,7 @@ public class AccountTest {
     }
 
     @Test
-    public void getAccount() throws Exception {
+    void getAccount() throws Exception {
         var account = new CreateAccountDTO();
         account.setCustomerId("1234");
         account.setCountry("Iran");

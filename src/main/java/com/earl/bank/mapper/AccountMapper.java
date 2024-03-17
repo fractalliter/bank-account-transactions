@@ -1,7 +1,6 @@
 package com.earl.bank.mapper;
 
 import com.earl.bank.entity.Account;
-import com.earl.bank.entity.Balance;
 import com.earl.bank.entity.Transaction;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
@@ -29,18 +28,8 @@ public interface AccountMapper {
     })
     Account getAccount(@Param("id") Long id);
 
-    @Select("SELECT account_id, amount, currency FROM balances WHERE account_id = #{accountID}")
-    @Results(value = {
-            @Result(property = "accountId", column = "account_id"),
-            @Result(property = "amount", column = "amount"),
-            @Result(property = "currency", column = "currency")
-    })
-    List<Balance> getBalances(Long accountId);
-
     @Select("SELECT t.id, t.account_id, t.amount, t.currency, t.direction, t.description " +
-            "FROM (SELECT * FROM transactions WHERE account_id=#{id}) AS t LEFT JOIN " +
-            "(SELECT * FROM accounts WHERE id= #{id}) AS a " +
-            "ON a.id = t.account_id " +
+            "FROM transactions AS t WHERE account_id=#{id} " +
             "ORDER BY t.id DESC LIMIT #{limit} OFFSET #{offset}")
     @Results(value = {
             @Result(property = "accountId", column = "account_id"),

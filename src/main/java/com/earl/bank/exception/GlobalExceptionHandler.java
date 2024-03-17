@@ -9,40 +9,43 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Optional;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(value = AccountNotFoundException.class)
-    public ResponseEntity<?> accountNotFoundException(AccountNotFoundException accountNotFoundException) {
+    public ResponseEntity<String> accountNotFoundException(AccountNotFoundException accountNotFoundException) {
         return new ResponseEntity<>(accountNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = InvalidCurrencyException.class)
-    public ResponseEntity<?> invalidCurrencyException(InvalidCurrencyException invalidCurrencyException) {
+    public ResponseEntity<String> invalidCurrencyException(InvalidCurrencyException invalidCurrencyException) {
         return new ResponseEntity<>(invalidCurrencyException.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = InsufficientFundException.class)
-    public ResponseEntity<?> insufficientFundException(InsufficientFundException insufficientFundException) {
+    public ResponseEntity<String> insufficientFundException(InsufficientFundException insufficientFundException) {
         return new ResponseEntity<>(insufficientFundException.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(JsonMappingException.class)
-    public ResponseEntity<?> handleConverterErrors(JsonMappingException exception) {
+    public ResponseEntity<String> handleConverterErrors(JsonMappingException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleConverterErrors(HttpMessageNotReadableException exception) {
-        var message = exception.getMessage() != null &&
-                !exception.getMessage().isEmpty() &&
-                exception.getMessage().contains("com.tuum.bankassignment.entity.Currency") ?
-                "Invalid Currency" : "Bad request";
+    public ResponseEntity<String> handleConverterErrors(HttpMessageNotReadableException exception) {
+        var message = Optional.ofNullable(exception.getMessage())
+                .filter(msg -> !msg.isEmpty())
+                .filter(msg -> msg.contains("\"com.earl.bank.entity.Currency\""))
+                .map(msg -> "Invalid Currency").orElse("Bad request");
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<?> databaseConnectionFailsException(Exception exception) {
+    public ResponseEntity<String> databaseConnectionFailsException(Exception exception) {
         logger.info(exception.getMessage());
         return new ResponseEntity<>("There is a problem", HttpStatus.INTERNAL_SERVER_ERROR);
     }

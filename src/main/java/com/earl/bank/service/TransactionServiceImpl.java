@@ -1,6 +1,8 @@
 package com.earl.bank.service;
 
 import com.earl.bank.dto.CreateTransactionDTO;
+import com.earl.bank.entity.Account;
+import com.earl.bank.entity.Balance;
 import com.earl.bank.entity.Direction;
 import com.earl.bank.entity.Transaction;
 import com.earl.bank.exception.AccountNotFoundException;
@@ -20,6 +22,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
     private final BalanceMapper balanceMapper;
     private final AccountService accountService;
+    private Direction direction;
 
     @Autowired
     public TransactionServiceImpl(TransactionMapper transactionMapper, BalanceMapper balanceMapper, AccountService accountService) {
@@ -28,33 +31,20 @@ public class TransactionServiceImpl implements TransactionService {
         this.accountService = accountService;
     }
 
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Transaction createTransaction(CreateTransactionDTO transaction)
             throws AccountNotFoundException, InvalidAmountException, InsufficientFundException {
-        var account = accountService.getAccount(transaction.getAccountId());
-        if (transaction.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+        if (transaction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidAmountException();
         }
-        var balanceComparison = balanceMapper.getBalance(
-                transaction.getAccountId(),
-                transaction.getCurrency()
-        ).getAmount().subtract(transaction.getAmount()).compareTo(BigDecimal.ZERO);
-        if (Direction.OUT.equals(transaction.getDirection())) {
-            if (balanceComparison < 0)
-                throw new InsufficientFundException();
-            else balanceMapper.decreaseBalance(
-                    account.getAccountId(),
-                    transaction.getCurrency(),
-                    transaction.getAmount()
-            );
-        } else if (Direction.IN.equals(transaction.getDirection()))
-            balanceMapper.increaseBalance(
-                    account.getAccountId(),
-                    transaction.getCurrency(),
-                    transaction.getAmount()
-            );
-        var balance = balanceMapper.getBalance(account.getAccountId(), transaction.getCurrency());
+        var account = accountService.getAccount(transaction.getAccountId());
+        this.setDirection(transaction.getDirection());
+        Balance newBalance = this.handleTransaction(account, transaction);
         var newTransaction = new Transaction(
                 transaction.getAccountId(),
                 transaction.getAmount(),
@@ -62,8 +52,12 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.getDirection(),
                 transaction.getDescription()
         );
-        transactionMapper.createTransaction(newTransaction);
-        newTransaction.setBalance(balance);
-        return newTransaction;
+        Transaction persitedTransaction = transactionMapper.createTransaction(newTransaction);
+        persitedTransaction.setBalance(newBalance);
+        return persitedTransaction;
+    }
+
+    private Balance handleTransaction(Account account, CreateTransactionDTO transaction) {
+        return this.direction.handler(balanceMapper, account, transaction);
     }
 }

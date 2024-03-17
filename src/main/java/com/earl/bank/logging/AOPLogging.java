@@ -1,17 +1,14 @@
 package com.earl.bank.logging;
 
-import org.aspectj.lang.JoinPoint;
+import com.earl.bank.configurations.RabbitMQSender;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
 public class AOPLogging {
-    private final static Logger log = LoggerFactory.getLogger(AOPLogging.class);
     private final RabbitMQSender rabbitMQSender;
 
     @Autowired
@@ -23,8 +20,7 @@ public class AOPLogging {
             value = "execution(* com.earl.bank.service.AccountService.*(..))",
             returning = "result"
     )
-    public void afterCreateAccount(JoinPoint joinPoint, Object result) {
-        log.debug(joinPoint.getSignature() + " " + result.toString());
+    public void afterCreateAccount(Object result) {
         rabbitMQSender.send(result);
     }
 
@@ -32,8 +28,7 @@ public class AOPLogging {
             value = "execution(* com.earl.bank.service.TransactionService.*(..))",
             returning = "result"
     )
-    public void afterCreateTransaction(JoinPoint joinPoint, Object result) {
-        log.debug(joinPoint.getSignature() + " " + result.toString());
+    public void afterCreateTransaction(Object result) {
         rabbitMQSender.send(result);
     }
 }

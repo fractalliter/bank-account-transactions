@@ -10,7 +10,7 @@ public class CreateTransactionDTO {
     BigDecimal amount;
     Currency currency;
     Direction direction;
-    String Description;
+    String description;
 
     public Long getAccountId() {
         return accountId;
@@ -45,10 +45,10 @@ public class CreateTransactionDTO {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 }

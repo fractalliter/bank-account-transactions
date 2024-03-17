@@ -10,11 +10,12 @@ import java.math.BigDecimal;
 public interface BalanceMapper {
     @Insert("INSERT INTO balances(currency, amount, account_id)" +
             "VALUES(#{currency}::valid_currencies, #{amount},#{accountId})")
-    void createBalance(Balance balance);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int createBalance(Balance balance);
 
     @Update("UPDATE balances SET amount= amount+#{amount} " +
             "WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies")
-    void increaseBalance(
+    Balance increaseBalance(
             @Param("accountId") Long accountId,
             @Param("currency") Currency currency,
             @Param("amount") BigDecimal amount
@@ -22,7 +23,7 @@ public interface BalanceMapper {
 
     @Update("UPDATE balances SET amount= amount-#{amount} " +
             "WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies AND amount > 0")
-    void decreaseBalance(
+    Balance decreaseBalance(
             @Param("accountId") Long accountId,
             @Param("currency") Currency currency,
             @Param("amount") BigDecimal amount
