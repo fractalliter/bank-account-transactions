@@ -32,13 +32,17 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Account createAccount(CreateAccountDTO account) {
         var newAccount = new Account(account.getCustomerId(), account.getCountry());
-        var persistedAccount = accountMapper.createAccount(newAccount);
+        accountMapper.createAccount(newAccount);
+        if (newAccount.getAccountId() == null) {
+            return newAccount;
+        }
         List<Balance> balances = account.getCurrency().stream().map(currency -> {
-            var balance = new Balance(persistedAccount.getAccountId(), BigDecimal.ZERO, currency);
-            return balanceMapper.createBalance(balance);
+            var balance = new Balance(newAccount.getAccountId(), BigDecimal.ZERO, currency);
+            balanceMapper.createBalance(balance);
+            return balance;
         }).collect(Collectors.toList());
-        persistedAccount.setBalances(balances);
-        return persistedAccount;
+        newAccount.setBalances(balances);
+        return newAccount;
     }
 
     @Override

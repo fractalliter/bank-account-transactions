@@ -10,7 +10,8 @@ import java.math.BigDecimal;
 public interface BalanceMapper {
     @Insert("INSERT INTO balances(currency, amount, account_id)" +
             "VALUES(#{currency}::valid_currencies, #{amount},#{accountId})")
-    Balance createBalance(Balance balance);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int createBalance(Balance balance);
 
     @Update("UPDATE balances SET amount= amount+#{amount} " +
             "WHERE account_id=#{accountId} AND currency=#{currency}::valid_currencies")

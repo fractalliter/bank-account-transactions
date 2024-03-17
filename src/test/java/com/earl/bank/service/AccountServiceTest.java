@@ -52,14 +52,10 @@ class AccountServiceTest {
         accountDTO.setCustomerId("1234");
         Account accountModel = new Account(accountDTO.getCustomerId(), accountDTO.getCountry());
         accountModel.setAccountId(1L);
-        Balance euroBalance = new Balance(accountModel.getAccountId(), BigDecimal.ZERO, Currency.EUR);
-        euroBalance.setAccountId(1L);
-        Balance poundBalance = new Balance(accountModel.getAccountId(), BigDecimal.ZERO, Currency.GBP);
-        euroBalance.setAccountId(2L);
 
         // When
-        when(accountMapper.createAccount(any(Account.class))).thenReturn(accountModel);
-        when(balanceMapper.createBalance(any(Balance.class))).thenReturn(euroBalance, poundBalance);
+        when(accountMapper.createAccount(any(Account.class))).thenReturn(1);
+        when(balanceMapper.createBalance(any(Balance.class))).thenReturn(1, 2);
 
         // Then
         var account = accountService.createAccount(accountDTO);

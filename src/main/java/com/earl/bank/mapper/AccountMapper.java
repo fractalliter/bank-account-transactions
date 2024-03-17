@@ -12,7 +12,7 @@ public interface AccountMapper {
     @Insert("INSERT INTO accounts(customer_id, country) " +
             " VALUES (#{customerId}, #{country})")
     @Options(useGeneratedKeys = true, keyProperty = "accountId")
-    Account createAccount(Account account);
+    int createAccount(Account account);
 
     @Select("SELECT * FROM accounts WHERE id = #{id}")
     @Results(value = {
