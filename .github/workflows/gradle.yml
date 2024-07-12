@@ -16,32 +16,13 @@ on:
 permissions:
   contents: read
 env:
-  DB_DATABASE: ${{ vars.DB_DATABASE }}
-  DB_USERNAME: postgres
-  DB_PASSWORD: postgres
-  DB_HOST: localhost
   MESSAGE_BROKER_HOST: localhost
-  DB_PORT: 5432
   PROFILE: ${{ vars.PROFILE }}
 jobs:
   build:
 
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-          POSTGRES_USERNAME: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_HOST_AUTH_METHOD: trust
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
       message_broker:
         image: rabbitmq:3
         ports:
@@ -53,17 +34,10 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Populate Database
-        run: psql -U postgres -h localhost -d ${{ env.DB_DATABASE }} -f src/main/resources/init.sql
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         env:
           PROFILE: ${{ env.PROFILE }}
-          DATABASE: ${{ vars.DB_DATABASE }}
-          DB_USERNAME: ${{env.DB_USERNAME}}
-          DB_PASSWORD: ${{env.DB_PASSWORD}}
-          DB_HOST: ${{env.DB_HOST}}
           MESSAGE_BROKER_HOST: ${{env.MESSAGE_BROKER_HOST}}
-          DB_PORT: ${{env.DB_PORT}}
         with:
           arguments: build --no-daemon

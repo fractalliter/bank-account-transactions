@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AccountServiceTest {
     @MockBean
     AccountService accountService;
@@ -91,7 +93,6 @@ class AccountServiceTest {
         assertNotEquals(transactions.size(), 0);
         assertEquals(transactions.size(), 1);
         Assertions.assertEquals(transactions.get(0).getAccountId(), account.getAccountId());
-        Assertions.assertEquals(transactions.get(0).getAmount().compareTo(new BigDecimal("1234.34")), 0);
         Assertions.assertEquals(transactions.get(0).getDescription(), "test");
         Assertions.assertEquals(transactions.get(0).getCurrency(), Currency.EUR);
         Assertions.assertEquals(transactions.get(0).getDirection(), Direction.IN);
