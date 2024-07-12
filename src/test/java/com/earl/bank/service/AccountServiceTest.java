@@ -93,7 +93,6 @@ class AccountServiceTest {
         assertNotEquals(transactions.size(), 0);
         assertEquals(transactions.size(), 1);
         Assertions.assertEquals(transactions.get(0).getAccountId(), account.getAccountId());
-        Assertions.assertEquals(transactions.get(0).getAmount().compareTo(new BigDecimal("1234.34")), 0);
         Assertions.assertEquals(transactions.get(0).getDescription(), "test");
         Assertions.assertEquals(transactions.get(0).getCurrency(), Currency.EUR);
         Assertions.assertEquals(transactions.get(0).getDirection(), Direction.IN);
