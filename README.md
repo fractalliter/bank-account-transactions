@@ -51,10 +51,18 @@ Hit the port 8080 for the good reasons.
 
 Go to [OpenAPI](http://localhost:8080/swagger-ui/index.html) documents page and hit the endpoints.
 
+## How to Test
+
+Main business logic is covered with testing to a good extent but there are rooms for improvement.
+
+```bash
+./gradlew test
+```
+
 ## Todo
 
 - [ ] add benchmark
-- [ ] add integration test for transactions
+- [x] add integration test for transactions
 - [ ] add java docs
 - [ ] add build status and test coverage to pull requests
 - [ ] add project status to readme

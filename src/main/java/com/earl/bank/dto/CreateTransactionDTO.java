@@ -3,12 +3,19 @@ package com.earl.bank.dto;
 import com.earl.bank.entity.Currency;
 import com.earl.bank.entity.Direction;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class CreateTransactionDTO {
+    @NotNull(message = "Account id should not be null")
+    @Positive(message = "Account Id should be more than 0")
     Long accountId;
+    @Positive(message = "Amount should be more than 0.00")
     BigDecimal amount;
+    @NotNull(message = "Currency should be selected")
     Currency currency;
+    @NotNull(message = "Direction of the transaction should be selected")
     Direction direction;
     String Description;
 

@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
     public Account createAccount(CreateAccountDTO account) throws InvalidCurrencyException {
         var tempCurrency = new HashSet<>(Set.copyOf(account.getCurrency()));
         tempCurrency.removeAll(Arrays.stream(Currency.values()).collect(Collectors.toSet()));
-        if (account.getCurrency().size() == 0 || tempCurrency.size() != 0) {
+        if (account.getCurrency().isEmpty() || !tempCurrency.isEmpty()) {
             throw new InvalidCurrencyException();
         }
         var newAccount = new Account(account.getCustomerId(), account.getCountry());
