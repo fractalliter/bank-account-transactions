@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface AccountMapper {
@@ -27,7 +28,7 @@ public interface AccountMapper {
                     )
             )
     })
-    Account getAccount(@Param("id") Long id);
+    Optional<Account> getAccount(@Param("id") Long id);
 
     @Select("SELECT account_id, amount, currency FROM balances WHERE account_id = #{accountID}")
     @Results(value = {

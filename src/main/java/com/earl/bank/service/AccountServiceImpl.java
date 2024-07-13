@@ -43,8 +43,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(Long accountId) throws AccountNotFoundException {
-        var account = accountMapper.getAccount(accountId);
-        return Optional.of(account).orElseThrow(AccountNotFoundException::new);
+        return accountMapper.getAccount(accountId).orElseThrow(AccountNotFoundException::new);
     }
 
     @Override

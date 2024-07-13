@@ -97,7 +97,10 @@ class AccountServiceTest {
         Assertions.assertEquals(transactions.get(0).getDescription(), "test");
         Assertions.assertEquals(transactions.get(0).getCurrency(), Currency.EUR);
         Assertions.assertEquals(transactions.get(0).getDirection(), Direction.IN);
+    }
 
+    @Test
+    void getTransactionThrowsAccountNotFound() {
         assertThrows(
                 AccountNotFoundException.class,
                 () -> accountService.getTransactions(10000L, (short) 0, (short) 2));
