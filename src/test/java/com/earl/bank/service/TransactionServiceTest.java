@@ -44,11 +44,6 @@ class TransactionServiceTest {
     @Autowired
     AOPLogging aopLoggingMock;
 
-    @BeforeEach
-    void setUp() {
-        doNothing().when(aopLoggingMock).afterCreateTransaction(any(), any());
-    }
-
     static Stream<Arguments> currencyAndDirectionCombinator() {
         List<Arguments> args = new LinkedList<>();
         for (Currency currency : Currency.values()) {
@@ -56,6 +51,11 @@ class TransactionServiceTest {
                 args.add(Arguments.arguments(currency, direction));
         }
         return args.stream();
+    }
+
+    @BeforeEach
+    void setUp() {
+        doNothing().when(aopLoggingMock).afterCreateTransaction(any(), any());
     }
 
     @ParameterizedTest(name = "for currency {0}")
@@ -187,6 +187,4 @@ class TransactionServiceTest {
                 () -> transactionService.createTransaction(transactionDTO)
         );
     }
-
-
 }

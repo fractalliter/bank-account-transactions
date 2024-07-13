@@ -57,7 +57,12 @@ class AccountServiceTest {
         Assertions.assertEquals(account.getCountry(), "Iran");
         Assertions.assertEquals(account.getCustomerId(), "1234");
         Assertions.assertEquals(account.getBalances().size(), 2);
-        Assertions.assertEquals(account.getBalances().stream().mapToDouble(i -> i.getAmount().doubleValue()).sum(), 0d);
+        Assertions.assertEquals(
+                account.getBalances()
+                        .stream()
+                        .mapToDouble(i -> i.getAmount().doubleValue())
+                        .sum(),
+                0d);
     }
 
     @Test
@@ -69,7 +74,14 @@ class AccountServiceTest {
         assertEquals(account.getCustomerId(), "1234");
         assertEquals(account.getCountry(), "Iran");
         assertNotEquals(account.getAccountId(), 0L);
-        assertThrows(AccountNotFoundException.class, () -> accountService.getAccount(10000L));
+    }
+
+    @Test
+    void getAccountThrowsAccountNotFound() {
+        assertThrows(
+                AccountNotFoundException.class,
+                () -> accountService.getAccount(10000L)
+        );
     }
 
     @Test
@@ -90,14 +102,18 @@ class AccountServiceTest {
         assertNotNull(transaction);
         assertNotEquals(transaction.getId(), 0L);
         assertEquals(transaction.getAmount().compareTo(new BigDecimal("1234.34")), 0);
-        var transactions = accountService.getTransactions(account.getAccountId(), (short) 0, (short) 2);
+        var transactions = accountService.getTransactions(
+                account.getAccountId(), (short) 0, (short) 2);
         assertNotEquals(transactions.size(), 0);
         assertEquals(transactions.size(), 1);
         Assertions.assertEquals(transactions.get(0).getAccountId(), account.getAccountId());
         Assertions.assertEquals(transactions.get(0).getDescription(), "test");
         Assertions.assertEquals(transactions.get(0).getCurrency(), Currency.EUR);
         Assertions.assertEquals(transactions.get(0).getDirection(), Direction.IN);
+    }
 
+    @Test
+    void getTransactionThrowsAccountNotFound() {
         assertThrows(
                 AccountNotFoundException.class,
                 () -> accountService.getTransactions(10000L, (short) 0, (short) 2));

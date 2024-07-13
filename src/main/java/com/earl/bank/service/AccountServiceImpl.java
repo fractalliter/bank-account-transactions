@@ -3,7 +3,6 @@ package com.earl.bank.service;
 import com.earl.bank.dto.CreateAccountDTO;
 import com.earl.bank.entity.Account;
 import com.earl.bank.entity.Balance;
-import com.earl.bank.entity.Currency;
 import com.earl.bank.entity.Transaction;
 import com.earl.bank.exception.AccountNotFoundException;
 import com.earl.bank.exception.InvalidCurrencyException;
@@ -15,11 +14,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -36,11 +31,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Account createAccount(CreateAccountDTO account) throws InvalidCurrencyException {
-        var tempCurrency = new HashSet<>(Set.copyOf(account.getCurrency()));
-        tempCurrency.removeAll(Arrays.stream(Currency.values()).collect(Collectors.toSet()));
-        if (account.getCurrency().isEmpty() || !tempCurrency.isEmpty()) {
-            throw new InvalidCurrencyException();
-        }
         var newAccount = new Account(account.getCustomerId(), account.getCountry());
         accountMapper.createAccount(newAccount);
         account.getCurrency().forEach(currency -> {
@@ -52,9 +42,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account getAccount(Long accountId) throws AccountNotFoundException {
-        var account = accountMapper.getAccount(accountId);
-        if (account == null) throw new AccountNotFoundException();
-        return account;
+        return accountMapper.getAccount(accountId).orElseThrow(AccountNotFoundException::new);
     }
 
     @Override

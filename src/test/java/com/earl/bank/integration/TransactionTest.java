@@ -34,19 +34,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TransactionTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
     AccountService accountService;
-
     @Autowired
     ObjectMapper objectMapper;
-
     @Autowired
     AOPLogging aopLoggingMock;
+    @Autowired
+    private MockMvc mvc;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         doNothing().when(aopLoggingMock).afterCreateTransaction(any(), any());
     }
 
