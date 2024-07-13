@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
-public class CreateTransactionDTO {
+public class CreateTransactionDTO implements Cloneable {
     @NotNull(message = "Account id should not be null")
     @Positive(message = "Account Id should be more than 0")
     Long accountId;
@@ -57,5 +57,10 @@ public class CreateTransactionDTO {
 
     public void setDescription(String description) {
         Description = description;
+    }
+
+    @Override
+    public CreateTransactionDTO clone() throws CloneNotSupportedException {
+        return (CreateTransactionDTO) super.clone();
     }
 }

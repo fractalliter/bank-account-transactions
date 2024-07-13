@@ -1,5 +1,6 @@
-package com.earl.bank.logging;
+package com.earl.bank.configuration;
 
+import com.earl.bank.logging.RabbitMQClient;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
