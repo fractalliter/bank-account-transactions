@@ -10,8 +10,10 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
+@Lazy
 public class RabbitMQConfig {
     @Bean
     Queue queue(@Value("${bank.rabbitmq.queue}") String queueName) {
@@ -34,7 +36,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitMQSender sender(RabbitTemplate template) {
-        return new RabbitMQSender(template);
+    public RabbitMQClient sender(RabbitTemplate template) {
+        return new RabbitMQClient(template);
     }
 }

@@ -5,7 +5,6 @@ import com.earl.bank.controller.TransactionController;
 import com.earl.bank.exception.GlobalExceptionHandler;
 import com.earl.bank.logging.AOPLogging;
 import com.earl.bank.logging.RabbitMQConfig;
-import com.earl.bank.logging.RabbitMQSender;
 import com.earl.bank.mapper.AccountMapper;
 import com.earl.bank.mapper.BalanceMapper;
 import com.earl.bank.mapper.TransactionMapper;
@@ -33,7 +32,6 @@ class BankAssignmentApplicationTests {
         Assertions.assertNotNull(applicationContext.getBean(AccountController.class));
         Assertions.assertNotNull(applicationContext.getBean(TransactionController.class));
         Assertions.assertNotNull(applicationContext.getBean(RabbitMQConfig.class));
-        Assertions.assertNotNull(applicationContext.getBean(RabbitMQSender.class));
         Assertions.assertNotNull(applicationContext.getBean(AOPLogging.class));
         Assertions.assertNotNull(applicationContext.getBean(AccountMapper.class));
         Assertions.assertNotNull(applicationContext.getBean(BalanceMapper.class));

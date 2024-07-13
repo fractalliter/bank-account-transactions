@@ -4,8 +4,10 @@ import com.earl.bank.dto.CreateAccountDTO;
 import com.earl.bank.dto.CreateTransactionDTO;
 import com.earl.bank.entity.Currency;
 import com.earl.bank.entity.Direction;
+import com.earl.bank.logging.AOPLogging;
 import com.earl.bank.service.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,10 +42,19 @@ public class TransactionTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    AOPLogging aopLoggingMock;
+
+    @BeforeEach
+    void setUp(){
+        doNothing().when(aopLoggingMock).afterCreateTransaction(any(), any());
+    }
+
     @Test
     void loadContext() {
         assertNotNull(mvc);
         assertNotNull(objectMapper);
+        assertNotNull(aopLoggingMock);
     }
 
     @Test

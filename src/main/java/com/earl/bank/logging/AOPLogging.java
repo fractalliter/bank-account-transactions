@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class AOPLogging {
     private final static Logger log = LoggerFactory.getLogger(AOPLogging.class);
-    private final RabbitMQSender rabbitMQSender;
+    private final RabbitMQClient sender;
 
     @Autowired
-    public AOPLogging(RabbitMQSender rabbitMQSender) {
-        this.rabbitMQSender = rabbitMQSender;
+    public AOPLogging(RabbitMQClient sender) {
+        this.sender = sender;
     }
 
     @AfterReturning(
@@ -24,8 +24,8 @@ public class AOPLogging {
             returning = "result"
     )
     public void afterCreateAccount(JoinPoint joinPoint, Object result) {
-        log.debug(joinPoint.getSignature() + " " + result.toString());
-        rabbitMQSender.send(result);
+        log.debug("{} {}", joinPoint.getSignature(), result.toString());
+        sender.send(result);
     }
 
     @AfterReturning(
@@ -33,7 +33,7 @@ public class AOPLogging {
             returning = "result"
     )
     public void afterCreateTransaction(JoinPoint joinPoint, Object result) {
-        log.debug(joinPoint.getSignature() + " " + result.toString());
-        rabbitMQSender.send(result);
+        log.debug("{} {}", joinPoint.getSignature(), result.toString());
+        sender.send(result);
     }
 }
