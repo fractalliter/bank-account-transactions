@@ -7,9 +7,7 @@ import com.earl.bank.entity.Direction;
 import com.earl.bank.exception.AccountNotFoundException;
 import com.earl.bank.exception.InsufficientFundException;
 import com.earl.bank.exception.InvalidAmountException;
-import com.earl.bank.mapper.BalanceMapper;
-import com.earl.bank.mapper.TransactionMapper;
-import org.junit.jupiter.api.AfterEach;
+import com.earl.bank.logging.AOPLogging;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +17,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -30,30 +27,26 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TransactionServiceTest {
 
-    @MockBean
+    @Autowired
     TransactionService transactionService;
 
     @Autowired
-    TransactionMapper transactionMapper;
+    AccountService accountService;
 
     @Autowired
-    BalanceMapper balanceMapper;
-    @Autowired
-    AccountService accountService;
+    AOPLogging aopLoggingMock;
 
     @BeforeEach
     void setUp() {
-        transactionService = new TransactionServiceImpl(transactionMapper, balanceMapper, accountService);
-    }
-
-    @AfterEach
-    void tearDown() {
+        doNothing().when(aopLoggingMock).afterCreateTransaction(any(), any());
     }
 
     static Stream<Arguments> currencyAndDirectionCombinator() {

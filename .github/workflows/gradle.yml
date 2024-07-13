@@ -15,18 +15,10 @@ on:
 
 permissions:
   contents: read
-env:
-  MESSAGE_BROKER_HOST: localhost
-  PROFILE: ${{ vars.PROFILE }}
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    services:
-      message_broker:
-        image: rabbitmq:3
-        ports:
-          - "5672:5672"
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 11
@@ -36,8 +28,5 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        env:
-          PROFILE: ${{ env.PROFILE }}
-          MESSAGE_BROKER_HOST: ${{env.MESSAGE_BROKER_HOST}}
         with:
           arguments: build --no-daemon

@@ -2,10 +2,10 @@ package com.earl.bank.logging;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-public class RabbitMQSender {
+public class RabbitMQClient {
     private final RabbitTemplate template;
 
-    public RabbitMQSender(RabbitTemplate template) {
+    public RabbitMQClient(RabbitTemplate template) {
         this.template = template;
     }
 
