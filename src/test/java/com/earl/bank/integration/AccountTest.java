@@ -6,7 +6,11 @@ import com.earl.bank.entity.Currency;
 import com.earl.bank.logging.AOPLogging;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +46,25 @@ public class AccountTest {
     @Autowired
     private MockMvc mvc;
 
+    static Stream<Arguments> validationData() throws CloneNotSupportedException {
+        var account = new CreateAccountDTO();
+        account.setCustomerId("1234");
+        account.setCountry("Iran");
+        List<Arguments> args = new LinkedList<>();
+        account.setCurrency(Set.of());
+        args.add(Arguments.arguments(
+                "currency", "At least one currency should be selected",
+                account.clone())
+        );
+        account.setCurrency(Set.of(Currency.EUR, Currency.GBP));
+        account.setCountry("");
+        args.add(Arguments.arguments("country", "Country can not be empty", account.clone()));
+        account.setCountry("Germany");
+        account.setCustomerId("");
+        args.add(Arguments.arguments("customerId", "Customer Id is can not be empty", account.clone()));
+        return args.stream();
+    }
+
     @BeforeEach
     void setUp() {
         doNothing().when(aopLoggingMock).afterCreateAccount(any(), any());
@@ -47,6 +73,7 @@ public class AccountTest {
     @Test
     void loadContext() {
         assertNotNull(mvc);
+        assertNotNull(objectMapper);
         assertNotNull(aopLoggingMock);
     }
 
@@ -71,6 +98,18 @@ public class AccountTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.balances[1].currency").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.balances[1].amount").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.balances[1].amount").value(0L));
+    }
+
+    @ParameterizedTest(name = "For field {0} should return {1}")
+    @MethodSource("validationData")
+    @DisplayName("Create Account Validations")
+    public void createAccountValidations(String field, String message, CreateAccountDTO account) throws Exception {
+        mvc.perform(post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(account))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath(String.format("$.%s", field)).value(message));
     }
 
     @Test

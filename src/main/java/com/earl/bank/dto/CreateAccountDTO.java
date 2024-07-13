@@ -6,12 +6,12 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
-public class CreateAccountDTO {
+public class CreateAccountDTO implements Cloneable {
 
     @NotBlank(message = "Customer Id is can not be empty")
     String customerId;
     @NotBlank(message = "Country can not be empty")
-    String Country;
+    String country;
     @NotEmpty(message = "At least one currency should be selected")
     Set<Currency> currency;
 
@@ -24,11 +24,11 @@ public class CreateAccountDTO {
     }
 
     public String getCountry() {
-        return Country;
+        return country;
     }
 
     public void setCountry(String country) {
-        Country = country;
+        this.country = country;
     }
 
     public Set<Currency> getCurrency() {
@@ -37,5 +37,10 @@ public class CreateAccountDTO {
 
     public void setCurrency(Set<Currency> currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public CreateAccountDTO clone() throws CloneNotSupportedException {
+        return (CreateAccountDTO) super.clone();
     }
 }

@@ -1,10 +1,10 @@
 package com.earl.bank;
 
+import com.earl.bank.configuration.RabbitMQConfig;
 import com.earl.bank.controller.AccountController;
 import com.earl.bank.controller.TransactionController;
 import com.earl.bank.exception.GlobalExceptionHandler;
 import com.earl.bank.logging.AOPLogging;
-import com.earl.bank.logging.RabbitMQConfig;
 import com.earl.bank.mapper.AccountMapper;
 import com.earl.bank.mapper.BalanceMapper;
 import com.earl.bank.mapper.TransactionMapper;

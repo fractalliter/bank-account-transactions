@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 
 @Configuration
 @Profile("test")
-public class TestConfigurations {
+public class Configurations {
     @Bean
     @Primary
     public DataSource dataSource() {
