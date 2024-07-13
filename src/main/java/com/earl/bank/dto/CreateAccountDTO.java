@@ -2,11 +2,17 @@ package com.earl.bank.dto;
 
 import com.earl.bank.entity.Currency;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
 public class CreateAccountDTO {
+
+    @NotBlank(message = "Customer Id is can not be empty")
     String customerId;
+    @NotBlank(message = "Country can not be empty")
     String Country;
+    @NotEmpty(message = "At least one currency should be selected")
     Set<Currency> currency;
 
     public String getCustomerId() {

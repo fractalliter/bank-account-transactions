@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Invalid Direction")
 public class InvalidDirectionException extends RuntimeException {
     public InvalidDirectionException() {
-
+        super("Invalid direction");
     }
 
     public InvalidDirectionException(String message) {

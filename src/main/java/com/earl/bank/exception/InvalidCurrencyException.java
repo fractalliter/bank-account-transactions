@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Invalid Currency")
 public class InvalidCurrencyException extends RuntimeException {
     public InvalidCurrencyException() {
+        super("Invalid currency");
     }
 
     public InvalidCurrencyException(String message) {

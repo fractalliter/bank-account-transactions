@@ -7,6 +7,7 @@ import com.earl.bank.exception.InvalidCurrencyException;
 import com.earl.bank.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Account createBankAccount(@RequestBody CreateAccountDTO account) throws InvalidCurrencyException {
+    Account createBankAccount(@Validated @RequestBody CreateAccountDTO account) throws InvalidCurrencyException {
         return accountService.createAccount(account);
     }
 

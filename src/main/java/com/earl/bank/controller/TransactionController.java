@@ -7,6 +7,7 @@ import com.earl.bank.service.AccountService;
 import com.earl.bank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class TransactionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Transaction createTransaction(@RequestBody CreateTransactionDTO transaction) throws AccountNotFoundException {
+    Transaction createTransaction(@Validated @RequestBody CreateTransactionDTO transaction) throws AccountNotFoundException {
         return transactionService.createTransaction(transaction);
     }
 
