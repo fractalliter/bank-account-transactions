@@ -77,7 +77,7 @@ class AccountServiceTest {
     }
 
     @Test
-    void getAccountThrowsAccountNotFound(){
+    void getAccountThrowsAccountNotFound() {
         assertThrows(
                 AccountNotFoundException.class,
                 () -> accountService.getAccount(10000L)

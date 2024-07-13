@@ -30,13 +30,13 @@ public class TestConfigurations {
 
     @Bean
     @Primary
-    public RabbitMQClient senderMock(){
+    public RabbitMQClient senderMock() {
         return mock(RabbitMQClient.class);
     }
 
     @Bean
     @Primary
-    public AOPLogging aopLoggingMock(){
+    public AOPLogging aopLoggingMock() {
         return mock(AOPLogging.class);
     }
 }

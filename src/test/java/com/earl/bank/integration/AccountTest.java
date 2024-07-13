@@ -33,16 +33,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AccountTest {
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
     ObjectMapper objectMapper;
-
     @Autowired
     AOPLogging aopLoggingMock;
+    @Autowired
+    private MockMvc mvc;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         doNothing().when(aopLoggingMock).afterCreateAccount(any(), any());
     }
 

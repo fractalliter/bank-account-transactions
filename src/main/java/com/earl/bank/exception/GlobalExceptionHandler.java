@@ -22,6 +22,7 @@ import java.util.function.Predicate;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(value = AccountNotFoundException.class)
     public ResponseEntity<?> accountNotFoundException(AccountNotFoundException accountNotFoundException) {
         return new ResponseEntity<>(accountNotFoundException.getMessage(), HttpStatus.NOT_FOUND);
@@ -46,7 +47,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleConverterErrors(HttpMessageNotReadableException exception) {
         var message = Optional.ofNullable(exception.getMessage())
                 .filter(Predicate.not(String::isEmpty)).map(msg -> {
-                    if (msg.contains("entity.Currency")){
+                    if (msg.contains("entity.Currency")) {
                         return String.format(
                                 "Invalid Currency, should be of %s",
                                 Arrays.toString(Currency.values())
