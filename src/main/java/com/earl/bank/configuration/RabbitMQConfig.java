@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Lazy;
 public class RabbitMQConfig {
     @Bean
     Queue queue(@Value("${bank.rabbitmq.queue}") String queueName) {
-        return new Queue(queueName, false);
+        return new Queue(queueName, true);
     }
 
     @Bean
@@ -27,8 +27,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    Binding binding(Queue queue, DirectExchange exchange, @Value("${bank.rabbitmq.routingkey}") String routingkey) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingkey);
+    Binding binding(Queue queue, DirectExchange exchange, @Value("${bank.rabbitmq.routingKey}") String routingKey) {
+        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
     }
 
     @Bean
