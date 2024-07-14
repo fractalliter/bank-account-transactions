@@ -17,7 +17,7 @@ public class CreateTransactionDTO implements Cloneable {
     Currency currency;
     @NotNull(message = "Direction of the transaction should be selected")
     Direction direction;
-    String Description;
+    String description;
 
     public Long getAccountId() {
         return accountId;
@@ -52,11 +52,11 @@ public class CreateTransactionDTO implements Cloneable {
     }
 
     public String getDescription() {
-        return Description;
+        return description;
     }
 
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
 
     @Override
