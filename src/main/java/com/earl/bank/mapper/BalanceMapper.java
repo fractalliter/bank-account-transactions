@@ -5,6 +5,7 @@ import com.earl.bank.entity.Currency;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Mapper
 public interface BalanceMapper {
@@ -34,5 +35,5 @@ public interface BalanceMapper {
             @Result(property = "amount", column = "amount"),
             @Result(property = "currency", column = "currency"),
     })
-    Balance getBalance(Long accountId, Currency currency);
+    Optional<Balance> getBalance(Long accountId, Currency currency);
 }
