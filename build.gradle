@@ -17,7 +17,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
-    implementation 'org.springframework.boot:spring-boot-starter-aop:2.6.7'
+    implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
