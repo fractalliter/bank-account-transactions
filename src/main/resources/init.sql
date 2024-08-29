@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS accounts
 (
     id          SERIAL      NOT NULL,
-    customer_id VARCHAR(80) NOT NULL,
+    customer_id VARCHAR(80) NOT NULL UNION,
     country     VARCHAR(120),
     create_at   TIMESTAMP   NOT NULL DEFAULT now(),
     PRIMARY KEY (id)
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS transactions
     currency    valid_currencies NOT NULL,
     direction   valid_directions NOT NULL,
     description TEXT             NOT NULL,
-    create_at   TIMESTAMP        NOT NULL DEFAULT now(),
+    created_at   TIMESTAMP        NOT NULL DEFAULT now(),
     PRIMARY KEY (id),
     FOREIGN KEY (account_id) REFERENCES accounts (id)
 );
