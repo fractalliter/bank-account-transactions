@@ -14,12 +14,13 @@ public interface AccountMapper {
     @Insert("INSERT INTO accounts(customer_id, country) " +
             " VALUES (#{customerId}, #{country})")
     @Options(useGeneratedKeys = true, keyProperty = "accountId")
-    int createAccount(Account account);
+    void createAccount(Account account);
 
-    @Select("SELECT * FROM accounts WHERE id = #{id}")
+    @Select("SELECT id, customer_id, accounts.create_at FROM accounts WHERE id = #{id}")
     @Results(value = {
             @Result(property = "accountId", column = "id"),
             @Result(property = "customerId", column = "customer_id"),
+            @Result(property = "createdAt", column = "created_at"),
             @Result(property = "balances", column = "id",
                     javaType = List.class,
                     many = @Many(
@@ -38,7 +39,7 @@ public interface AccountMapper {
     })
     List<Balance> getBalances(Long accountId);
 
-    @Select("SELECT id, account_id, amount, currency, direction, description " +
+    @Select("SELECT id, account_id, amount, currency, direction, description, create_at " +
             "FROM transactions WHERE account_id=#{id} " +
             "ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
     @Results(value = {
@@ -47,6 +48,7 @@ public interface AccountMapper {
             @Result(property = "currency", column = "currency"),
             @Result(property = "direction", column = "direction"),
             @Result(property = "description", column = "description"),
+            @Result(property = "createdAt", column = "created_at")
     })
     List<Transaction> getTransactions(
             @Param("id") Long id,

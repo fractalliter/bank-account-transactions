@@ -1,6 +1,7 @@
 package com.earl.bank.service;
 
 import com.earl.bank.dto.CreateTransactionDTO;
+import com.earl.bank.entity.Balance;
 import com.earl.bank.entity.Direction;
 import com.earl.bank.entity.Transaction;
 import com.earl.bank.exception.AccountNotFoundException;
@@ -8,7 +9,7 @@ import com.earl.bank.exception.InsufficientFundException;
 import com.earl.bank.exception.InvalidAmountException;
 import com.earl.bank.mapper.BalanceMapper;
 import com.earl.bank.mapper.TransactionMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,54 +17,35 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 
 @Service
+@AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
     private final BalanceMapper balanceMapper;
     private final AccountService accountService;
 
-    @Autowired
-    public TransactionServiceImpl(TransactionMapper transactionMapper, BalanceMapper balanceMapper, AccountService accountService) {
-        this.transactionMapper = transactionMapper;
-        this.balanceMapper = balanceMapper;
-        this.accountService = accountService;
-    }
-
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Transaction createTransaction(CreateTransactionDTO transaction)
             throws AccountNotFoundException, InvalidAmountException, InsufficientFundException {
-        var account = accountService.getAccount(transaction.getAccountId());
-        if (transaction.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidAmountException();
-        }
-        var balanceComparison = balanceMapper.getBalance(
-                transaction.getAccountId(),
-                transaction.getCurrency()
-        ).getAmount().subtract(transaction.getAmount()).compareTo(BigDecimal.ZERO);
         if (Direction.OUT.equals(transaction.getDirection())) {
-            if (balanceComparison < 0)
-                throw new InsufficientFundException();
-            else balanceMapper.decreaseBalance(
-                    account.getAccountId(),
-                    transaction.getCurrency(),
-                    transaction.getAmount()
-            );
-        } else if (Direction.IN.equals(transaction.getDirection()))
-            balanceMapper.increaseBalance(
-                    account.getAccountId(),
-                    transaction.getCurrency(),
-                    transaction.getAmount()
-            );
-        var balance = balanceMapper.getBalance(account.getAccountId(), transaction.getCurrency());
-        var newTransaction = new Transaction(
-                transaction.getAccountId(),
-                transaction.getAmount(),
-                transaction.getCurrency(),
-                transaction.getDirection(),
-                transaction.getDescription()
-        );
+            var balanceComparison = balanceMapper
+                    .getBalance(
+                            transaction.getAccountId(),
+                            transaction.getCurrency()
+                    )
+                    .map(Balance::getAmount)
+                    .map(amount -> amount.subtract(transaction.getAmount()).compareTo(BigDecimal.ZERO))
+                    .orElseThrow(AccountNotFoundException::new);
+            if (balanceComparison < 0) throw new InsufficientFundException();
+        }
+        Transaction newTransaction = Transaction.builder()
+                .accountId(transaction.getAccountId())
+                .amount(transaction.getAmount())
+                .currency(transaction.getCurrency())
+                .direction(transaction.getDirection())
+                .description(transaction.getDescription())
+                .build();
         transactionMapper.createTransaction(newTransaction);
-        newTransaction.setBalance(balance);
         return newTransaction;
     }
 }

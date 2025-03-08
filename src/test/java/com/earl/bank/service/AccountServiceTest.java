@@ -67,7 +67,7 @@ class AccountServiceTest {
 
     @Test
     void getAccount() throws AccountNotFoundException {
-        var account = new Account("1234", "Iran");
+        var account = Account.builder().customerId("1234").country("Iran").build();
         accountMapper.createAccount(account);
         account = accountService.getAccount(account.getAccountId());
         assertNotNull(account);
@@ -91,13 +91,13 @@ class AccountServiceTest {
         accountDTO.setCurrency(Set.of(Currency.EUR, Currency.GBP));
         accountDTO.setCustomerId("1234");
         var account = accountService.createAccount(accountDTO);
-        var transaction = new Transaction(
-                account.getAccountId(),
-                new BigDecimal("1234.34"),
-                Currency.EUR,
-                Direction.IN,
-                "test"
-        );
+        var transaction = Transaction.builder()
+                .accountId(account.getAccountId())
+                .amount(new BigDecimal("1234.34"))
+                .currency(Currency.EUR)
+                .direction(Direction.IN)
+                .description("test")
+                .build();
         transactionMapper.createTransaction(transaction);
         assertNotNull(transaction);
         assertNotEquals(transaction.getId(), 0L);

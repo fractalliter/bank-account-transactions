@@ -25,8 +25,8 @@ public class TransactionController {
         this.accountService = accountService;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     Transaction createTransaction(@Validated @RequestBody CreateTransactionDTO transaction) throws AccountNotFoundException {
         return transactionService.createTransaction(transaction);
     }
